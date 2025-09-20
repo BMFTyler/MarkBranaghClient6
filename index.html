@@ -1688,16 +1688,6 @@
           borderWidth: 2,
           fill: true,
           tension: 0.4
-        }, {
-          label: 'FCATS Token Cushion',
-          data: [5200, 5200, 5200, 5200, 5200, 5200],
-          borderColor: '#10b981',
-          backgroundColor: 'transparent',
-          borderWidth: 2,
-          borderDash: [5, 5],
-          fill: false,
-          pointRadius: 0,
-          pointHoverRadius: 0
         }]
       },
       options: {
@@ -1720,15 +1710,20 @@
           },
           y: {
             grid: {
-              color: '#374151'
+              color: '#374151',
+              drawOnChartArea: true,
+              drawTicks: true
             },
             ticks: {
               color: '#9ca3af',
               callback: function(value) {
+                if (value === 5200) {
+                  return 'FCATS Cushion: $5.2k';
+                }
                 return '$' + (value / 1000) + 'k';
               }
             },
-            min: 10000,
+            min: 5000,
             max: 25000
           }
         }
