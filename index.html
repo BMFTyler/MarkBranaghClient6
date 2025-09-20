@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crypto Dashboard</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -104,11 +107,13 @@
         padding: 0.75rem;
         border-radius: 0.75rem;
         cursor: pointer;
-        display: flex;
+        display: flex !important;
         align-items: center;
         justify-content: center;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         transition: all 0.2s ease;
+        visibility: visible !important;
+        opacity: 1 !important;
       }
       
       .mobile-menu-btn:hover {
@@ -1145,14 +1150,29 @@
     
     // Mobile-only functionality - only runs on mobile devices
     function initMobileFeatures() {
+      console.log('Screen width:', window.innerWidth);
+      console.log('Is mobile:', window.innerWidth <= 768);
+      
       if (window.innerWidth <= 768) {
+        console.log('Initializing mobile features...');
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const sidebar = document.querySelector('.sidebar');
         const mobileOverlay = document.getElementById('mobileOverlay');
         
+        console.log('Mobile elements found:', {
+          menuBtn: !!mobileMenuBtn,
+          sidebar: !!sidebar,
+          overlay: !!mobileOverlay
+        });
+        
         if (mobileMenuBtn && sidebar && mobileOverlay) {
+          // Make sure mobile menu button is visible
+          mobileMenuBtn.style.display = 'flex';
+          mobileMenuBtn.style.visibility = 'visible';
+          
           // Toggle mobile sidebar
           mobileMenuBtn.addEventListener('click', function() {
+            console.log('Mobile menu clicked');
             sidebar.classList.toggle('mobile-open');
             mobileOverlay.classList.toggle('show');
           });
@@ -1171,7 +1191,13 @@
               mobileOverlay.classList.remove('show');
             });
           });
+          
+          console.log('Mobile features initialized successfully');
+        } else {
+          console.error('Mobile elements not found');
         }
+      } else {
+        console.log('Desktop detected, skipping mobile features');
       }
     }
     
