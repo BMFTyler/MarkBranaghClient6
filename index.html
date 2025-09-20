@@ -76,37 +76,48 @@
         width: 280px;
         z-index: 1000;
         transition: left 0.3s ease;
+        background: #1e293b;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
       }
       
       .sidebar.mobile-open {
         left: 0;
       }
       
-      /* Mobile main content - full width */
+      /* Mobile main content - full width with top padding for menu button */
       .main-content {
         margin-left: 0;
         width: 100%;
         padding: 1rem;
+        padding-top: 4rem; /* Space for mobile menu button */
       }
       
-      /* Mobile menu button */
+      /* Mobile menu button - more prominent */
       .mobile-menu-btn {
         position: fixed;
         top: 1rem;
         left: 1rem;
         z-index: 1001;
         background: #1e293b;
-        border: none;
+        border: 2px solid #475569;
         color: white;
-        padding: 0.5rem;
-        border-radius: 0.5rem;
+        padding: 0.75rem;
+        border-radius: 0.75rem;
         cursor: pointer;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.2s ease;
       }
       
-      /* Hide mobile menu button on desktop */
-      .mobile-menu-btn {
-        display: none;
+      .mobile-menu-btn:hover {
+        background: #334155;
+        transform: scale(1.05);
+      }
+      
+      .mobile-menu-btn:active {
+        transform: scale(0.95);
       }
       
       /* Mobile overlay */
@@ -116,13 +127,35 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.6);
         z-index: 999;
         display: none;
+        backdrop-filter: blur(2px);
       }
       
       .mobile-overlay.show {
         display: block;
+      }
+      
+      /* Fix header spacing on mobile */
+      .mobile-header {
+        padding-top: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      /* Fix button spacing on mobile */
+      .mobile-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      .mobile-buttons button {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
       }
       
       /* Mobile-optimized cards */
@@ -196,6 +229,37 @@
         padding: 0.75rem;
         font-size: 0.875rem;
       }
+      
+      /* Mobile-optimized risk alert */
+      .mobile-risk-alert {
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+      }
+      
+      /* Mobile-optimized metric cards */
+      .mobile-metric-card {
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      /* Mobile-optimized text */
+      .mobile-text-2xl {
+        font-size: 1.5rem;
+      }
+      
+      .mobile-text-3xl {
+        font-size: 1.875rem;
+      }
+      
+      /* Mobile-optimized spacing */
+      .mobile-space-y-4 > * + * {
+        margin-top: 1rem;
+      }
+      
+      /* Mobile-optimized grid gaps */
+      .mobile-gap-4 {
+        gap: 1rem;
+      }
     }
     
     /* Ensure desktop is completely unchanged */
@@ -213,8 +277,9 @@
 <body class="min-h-screen bg-slate-900">
   <div class="flex">
     <!-- Mobile Menu Button (only visible on mobile) -->
-    <button id="mobileMenuBtn" class="mobile-menu-btn">
+    <button id="mobileMenuBtn" class="mobile-menu-btn" title="Open Menu">
       <i data-feather="menu" class="w-6 h-6"></i>
+      <span class="ml-2 text-sm font-medium">Menu</span>
     </button>
     
     <!-- Mobile Overlay (only visible on mobile) -->
@@ -245,14 +310,14 @@
 
     <!-- Main Content -->
     <main class="main-content flex-1 p-6">
-      <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-white">Portfolio Overview</h2>
-        <div class="flex space-x-3">
-          <button class="flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
+      <div class="flex justify-between items-center mb-6 mobile-header">
+        <h2 class="text-2xl font-bold text-white mobile-text-xl">Portfolio Overview</h2>
+        <div class="flex space-x-3 mobile-buttons">
+          <button class="flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors mobile-btn">
             <i data-feather="upload"></i>
             <span>Import CSV</span>
           </button>
-          <button class="flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
+          <button class="flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors mobile-btn">
             <i data-feather="refresh-cw"></i>
             <span>Refresh Data</span>
           </button>
@@ -260,7 +325,7 @@
       </div>
 
       <!-- Risk Factor Alert -->
-      <div class="mb-6">
+      <div class="mb-6 mobile-risk-alert">
         <div class="bg-red-900 border border-red-700 rounded-lg p-4">
           <div class="flex items-center space-x-3">
             <i data-feather="alert-triangle" class="text-red-400 text-2xl"></i>
@@ -276,7 +341,7 @@
       <!-- Key Metrics Cards -->
       <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 mobile-grid-1">
         <!-- Portfolio Value Card -->
-        <div class="card p-4">
+        <div class="card p-4 mobile-metric-card">
           <div class="flex justify-between items-start mb-4">
             <h3 class="text-white text-lg font-bold">1. Portfolio Value</h3>
             <i data-feather="dollar-sign" class="text-gray-400"></i>
@@ -291,7 +356,7 @@
         </div>
 
         <!-- Unrealized P&L Card -->
-        <div class="card p-4">
+        <div class="card p-4 mobile-metric-card">
           <div class="flex justify-between items-start mb-4">
             <h3 class="text-white text-lg font-bold">2. Unrealized P&L</h3>
             <i data-feather="trending-up" class="text-green-400"></i>
@@ -301,7 +366,7 @@
         </div>
 
         <!-- Realized P&L Card -->
-        <div class="card p-4">
+        <div class="card p-4 mobile-metric-card">
           <div class="flex justify-between items-start mb-4">
             <h3 class="text-white text-lg font-bold">3. Realized P&L</h3>
             <i data-feather="trending-down" class="text-red-400"></i>
@@ -311,7 +376,7 @@
         </div>
 
         <!-- Gas/Fees Card -->
-        <div class="card p-4">
+        <div class="card p-4 mobile-metric-card">
           <div class="flex justify-between items-start mb-4">
             <h3 class="text-white text-lg font-bold">4. Gas/Fees</h3>
             <i data-feather="zap" class="text-gray-400"></i>
