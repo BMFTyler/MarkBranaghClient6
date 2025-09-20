@@ -88,6 +88,43 @@
         left: 0;
       }
       
+      /* Hide menu button when sidebar is open */
+      .sidebar.mobile-open ~ .mobile-menu-btn {
+        display: none !important;
+      }
+      
+      /* Close button inside sidebar */
+      .mobile-close-btn {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: #475569;
+        border: none;
+        color: white;
+        padding: 0.5rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        display: none;
+        z-index: 1002;
+        transition: all 0.2s ease;
+      }
+      
+      .mobile-close-btn:hover {
+        background: #64748b;
+        transform: scale(1.05);
+      }
+      
+      .mobile-close-btn:active {
+        transform: scale(0.95);
+      }
+      
+      /* Show close button when sidebar is open */
+      .sidebar.mobile-open .mobile-close-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      
       /* Mobile main content - full width with top padding for menu button */
       .main-content {
         margin-left: 0;
@@ -312,6 +349,11 @@
     
     <!-- Sidebar -->
     <aside class="sidebar w-64 bg-slate-800 p-4">
+      <!-- Mobile close button (only visible when sidebar is open) -->
+      <button id="mobileCloseBtn" class="mobile-close-btn" title="Close Menu">
+        <i data-feather="x" class="w-5 h-5"></i>
+      </button>
+      
       <div class="flex items-center space-x-3 mb-8">
         <i data-feather="activity" class="text-blue-400"></i>
         <h1 class="text-xl font-bold text-white">Mark Branagh Client #6</h1>
@@ -1194,6 +1236,8 @@
         });
         
         if (mobileMenuBtn && sidebar && mobileOverlay) {
+          const mobileCloseBtn = document.getElementById('mobileCloseBtn');
+          
           // Make sure mobile menu button is visible
           mobileMenuBtn.style.display = 'flex';
           mobileMenuBtn.style.visibility = 'visible';
@@ -1201,9 +1245,18 @@
           // Toggle mobile sidebar
           mobileMenuBtn.addEventListener('click', function() {
             console.log('Mobile menu clicked');
-            sidebar.classList.toggle('mobile-open');
-            mobileOverlay.classList.toggle('show');
+            sidebar.classList.add('mobile-open');
+            mobileOverlay.classList.add('show');
           });
+          
+          // Close sidebar when clicking close button
+          if (mobileCloseBtn) {
+            mobileCloseBtn.addEventListener('click', function() {
+              console.log('Mobile close clicked');
+              sidebar.classList.remove('mobile-open');
+              mobileOverlay.classList.remove('show');
+            });
+          }
           
           // Close sidebar when clicking overlay
           mobileOverlay.addEventListener('click', function() {
