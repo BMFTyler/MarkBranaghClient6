@@ -1617,7 +1617,7 @@
     new Chart(portfolioCtx, {
       type: 'line',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        labels: [],
         datasets: [{
           label: 'Portfolio Value',
           data: [22500, 21000, 18000, 15000, 14000, 12546.34],
@@ -1638,11 +1638,9 @@
         },
         scales: {
           x: {
+            display: false,
             grid: {
-              color: '#374151'
-            },
-            ticks: {
-              color: '#9ca3af'
+              display: false
             }
           },
           y: {
