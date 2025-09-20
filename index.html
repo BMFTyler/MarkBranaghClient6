@@ -90,7 +90,8 @@
       
       /* Hide menu button when sidebar is open */
       .sidebar.mobile-open ~ * .mobile-menu-btn,
-      .sidebar.mobile-open ~ .mobile-menu-btn {
+      .sidebar.mobile-open ~ .mobile-menu-btn,
+      .sidebar-open .mobile-menu-btn {
         display: none !important;
         visibility: hidden !important;
         opacity: 0 !important;
@@ -1250,6 +1251,7 @@
             console.log('Mobile menu clicked');
             sidebar.classList.add('mobile-open');
             mobileOverlay.classList.add('show');
+            document.body.classList.add('sidebar-open');
             // Hide menu button when sidebar opens
             mobileMenuBtn.style.display = 'none';
           });
@@ -1260,6 +1262,7 @@
               console.log('Mobile close clicked');
               sidebar.classList.remove('mobile-open');
               mobileOverlay.classList.remove('show');
+              document.body.classList.remove('sidebar-open');
               // Show menu button when sidebar closes
               mobileMenuBtn.style.display = 'flex';
             });
@@ -1269,6 +1272,7 @@
           mobileOverlay.addEventListener('click', function() {
             sidebar.classList.remove('mobile-open');
             mobileOverlay.classList.remove('show');
+            document.body.classList.remove('sidebar-open');
             // Show menu button when sidebar closes
             mobileMenuBtn.style.display = 'flex';
           });
@@ -1279,6 +1283,7 @@
             item.addEventListener('click', function() {
               sidebar.classList.remove('mobile-open');
               mobileOverlay.classList.remove('show');
+              document.body.classList.remove('sidebar-open');
               // Show menu button when sidebar closes
               mobileMenuBtn.style.display = 'flex';
             });
