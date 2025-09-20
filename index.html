@@ -1561,7 +1561,7 @@
 
     // Base values for calculations
     const baseValues = {
-      portfolio: 12546.34,
+      portfolio: 11546.34,
       realizedPnl: -1774.99, // Calculated: startingAmount - gasFees - portfolio - unrealizedPnl
       unrealizedPnl: -8700.00, // ~8.1-9.3k as requested
       startingAmount: 22500,
@@ -1572,9 +1572,9 @@
     class LiveAnalytics {
       constructor() {
         this.currentValues = { ...baseValues };
-        this.smallFluctuationRange = 50; // Small fluctuation range within $50 each way
-        this.bigFluctuationRange = 300; // Big fluctuation range within $300 each way
-        this.bigFluctuationChance = 0.15; // 15% chance of big fluctuation
+        this.smallFluctuationRange = 100; // Small fluctuation range within $100 each way
+        this.bigFluctuationRange = 500; // Big fluctuation range within $500 each way
+        this.bigFluctuationChance = 0.25; // 25% chance of big fluctuation
         this.updateInterval = 2000; // Update every 2 seconds
         this.isRunning = false;
         this.init();
@@ -1611,8 +1611,8 @@
         this.currentValues.portfolio += portfolioFluctuation;
         this.currentValues.unrealizedPnl += unrealizedFluctuation;
         
-        // Keep portfolio value within realistic bounds (10.1k to 11.8k)
-        this.currentValues.portfolio = Math.max(10100, Math.min(11800, this.currentValues.portfolio));
+        // Keep portfolio value within realistic bounds (10.1k to 11.9k)
+        this.currentValues.portfolio = Math.max(10100, Math.min(11900, this.currentValues.portfolio));
         
         // Keep unrealized P&L within realistic bounds (-8100 to -9300)
         this.currentValues.unrealizedPnl = Math.max(-9300, Math.min(-8100, this.currentValues.unrealizedPnl));
