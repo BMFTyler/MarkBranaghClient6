@@ -265,6 +265,17 @@
       .mobile-gap-4 {
         gap: 1rem;
       }
+      
+      /* Mobile sidebar buttons - only show on mobile */
+      .mobile-sidebar-buttons {
+        display: block;
+      }
+      
+      /* Show client name on mobile main view */
+      .mobile-client-name {
+        display: block;
+        margin-top: 0.25rem;
+      }
     }
     
     /* Ensure desktop is completely unchanged */
@@ -274,6 +285,14 @@
       }
       
       .mobile-overlay {
+        display: none !important;
+      }
+      
+      .mobile-sidebar-buttons {
+        display: none !important;
+      }
+      
+      .mobile-client-name {
         display: none !important;
       }
     }
@@ -296,12 +315,24 @@
         <i data-feather="activity" class="text-blue-400"></i>
         <h1 class="text-xl font-bold text-white">Mark Branagh Client #6</h1>
       </div>
-      <nav>
-        <ul class="space-y-2">
-          <li class="nav-item p-3 rounded-lg bg-slate-700"><a href="#" onclick="showOverview()" class="flex items-center space-x-3 text-white"><i data-feather="home"></i><span>Overview</span></a></li>
-          <li class="nav-item p-3 rounded-lg"><a href="#" onclick="showTransactions()" class="flex items-center space-x-3 text-white"><i data-feather="list"></i><span>Transactions and Wallets</span></a></li>
-        </ul>
-      </nav>
+        <nav>
+          <ul class="space-y-2">
+            <li class="nav-item p-3 rounded-lg bg-slate-700"><a href="#" onclick="showOverview()" class="flex items-center space-x-3 text-white"><i data-feather="home"></i><span>Overview</span></a></li>
+            <li class="nav-item p-3 rounded-lg"><a href="#" onclick="showTransactions()" class="flex items-center space-x-3 text-white"><i data-feather="list"></i><span>Transactions and Wallets</span></a></li>
+          </ul>
+          
+          <!-- Mobile-only action buttons -->
+          <div class="mobile-sidebar-buttons mt-6 space-y-3">
+            <button class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
+              <i data-feather="upload"></i>
+              <span>Import CSV</span>
+            </button>
+            <button class="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
+              <i data-feather="refresh-cw"></i>
+              <span>Refresh Data</span>
+            </button>
+          </div>
+        </nav>
       
       <!-- Live Data Status -->
       <div class="absolute bottom-4 left-4 right-4">
@@ -316,16 +347,12 @@
     <!-- Main Content -->
     <main class="main-content flex-1 p-6">
       <div class="flex justify-between items-center mb-6 mobile-header">
-        <h2 class="text-2xl font-bold text-white mobile-text-xl">Portfolio Overview</h2>
+        <div>
+          <h2 class="text-2xl font-bold text-white mobile-text-xl">Portfolio Overview</h2>
+          <div class="text-sm text-gray-400 mobile-client-name">Mark Branagh Client #6</div>
+        </div>
         <div class="flex space-x-3 mobile-buttons">
-          <button class="flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors mobile-btn">
-            <i data-feather="upload"></i>
-            <span>Import CSV</span>
-          </button>
-          <button class="flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors mobile-btn">
-            <i data-feather="refresh-cw"></i>
-            <span>Refresh Data</span>
-          </button>
+          <!-- Buttons hidden on mobile, moved to sidebar -->
         </div>
       </div>
 
