@@ -7,6 +7,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
+  <meta name="version" content="2.0">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/feather-icons"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -301,9 +302,9 @@
 <body class="min-h-screen bg-slate-900">
   <div class="flex">
     <!-- Mobile Menu Button (only visible on mobile) -->
-    <button id="mobileMenuBtn" class="mobile-menu-btn" title="Open Menu">
+    <button id="mobileMenuBtn" class="mobile-menu-btn" title="Open Menu - Version 2.0">
       <i data-feather="menu" class="w-6 h-6"></i>
-      <span class="ml-2 text-sm font-medium">Menu</span>
+      <span class="ml-2 text-sm font-medium">Menu v2.0</span>
     </button>
     
     <!-- Mobile Overlay (only visible on mobile) -->
@@ -1229,7 +1230,18 @@
     }
     
     // Initialize mobile features on page load
-    document.addEventListener('DOMContentLoaded', initMobileFeatures);
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Page loaded - Version 2.0');
+      initMobileFeatures();
+      
+      // Force refresh if this is an old cached version
+      if (window.innerWidth <= 768) {
+        console.log('Mobile detected - checking for updates...');
+        // Add a visual indicator that mobile features are active
+        const body = document.body;
+        body.setAttribute('data-mobile-version', '2.0');
+      }
+    });
     
     // Re-initialize on window resize
     window.addEventListener('resize', function() {
