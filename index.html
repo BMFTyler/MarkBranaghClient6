@@ -89,8 +89,11 @@
       }
       
       /* Hide menu button when sidebar is open */
+      .sidebar.mobile-open ~ * .mobile-menu-btn,
       .sidebar.mobile-open ~ .mobile-menu-btn {
         display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
       }
       
       /* Close button inside sidebar */
@@ -339,9 +342,9 @@
 <body class="min-h-screen bg-slate-900">
   <div class="flex">
     <!-- Mobile Menu Button (only visible on mobile) -->
-    <button id="mobileMenuBtn" class="mobile-menu-btn" title="Open Menu - Version 2.0">
+    <button id="mobileMenuBtn" class="mobile-menu-btn" title="Open Menu">
       <i data-feather="menu" class="w-6 h-6"></i>
-      <span class="ml-2 text-sm font-medium">Menu v2.0</span>
+      <span class="ml-2 text-sm font-medium">Menu</span>
     </button>
     
     <!-- Mobile Overlay (only visible on mobile) -->
@@ -1247,6 +1250,8 @@
             console.log('Mobile menu clicked');
             sidebar.classList.add('mobile-open');
             mobileOverlay.classList.add('show');
+            // Hide menu button when sidebar opens
+            mobileMenuBtn.style.display = 'none';
           });
           
           // Close sidebar when clicking close button
@@ -1255,6 +1260,8 @@
               console.log('Mobile close clicked');
               sidebar.classList.remove('mobile-open');
               mobileOverlay.classList.remove('show');
+              // Show menu button when sidebar closes
+              mobileMenuBtn.style.display = 'flex';
             });
           }
           
@@ -1262,6 +1269,8 @@
           mobileOverlay.addEventListener('click', function() {
             sidebar.classList.remove('mobile-open');
             mobileOverlay.classList.remove('show');
+            // Show menu button when sidebar closes
+            mobileMenuBtn.style.display = 'flex';
           });
           
           // Close sidebar when clicking navigation items
@@ -1270,6 +1279,8 @@
             item.addEventListener('click', function() {
               sidebar.classList.remove('mobile-open');
               mobileOverlay.classList.remove('show');
+              // Show menu button when sidebar closes
+              mobileMenuBtn.style.display = 'flex';
             });
           });
           
