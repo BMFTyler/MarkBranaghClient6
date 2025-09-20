@@ -250,6 +250,26 @@
         padding: 0.5rem;
       }
       
+      /* Client Information mobile optimizations */
+      .client-info-card {
+        margin-bottom: 1rem;
+        padding: 1rem;
+      }
+      
+      .client-info-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      
+      .client-info-text {
+        font-size: 0.875rem;
+      }
+      
+      .client-info-title {
+        font-size: 1.125rem;
+      }
+      
       .mobile-p-4 {
         padding: 1rem;
       }
@@ -366,6 +386,7 @@
           <ul class="space-y-2">
             <li class="nav-item p-3 rounded-lg bg-slate-700"><a href="#" onclick="showOverview()" class="flex items-center space-x-3 text-white"><i data-feather="home"></i><span>Overview</span></a></li>
             <li class="nav-item p-3 rounded-lg"><a href="#" onclick="showTransactions()" class="flex items-center space-x-3 text-white"><i data-feather="list"></i><span>Transactions and Wallets</span></a></li>
+            <li class="nav-item p-3 rounded-lg"><a href="#" onclick="showClientInfo()" class="flex items-center space-x-3 text-white"><i data-feather="user"></i><span>Client Information</span></a></li>
           </ul>
           
           <!-- Mobile-only action buttons -->
@@ -1216,6 +1237,149 @@
       </div>
     </div>
 
+    <!-- Client Information Page -->
+    <div id="clientInfoPage" class="main-content hidden">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h1 class="text-3xl font-bold text-white">Client Information</h1>
+          <button onclick="showOverview()" class="flex items-center space-x-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-500 transition-colors">
+            <i data-feather="arrow-left" class="w-4 h-4"></i>
+            <span>Back to Overview</span>
+          </button>
+        </div>
+
+        <!-- Client Information Cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 client-info-grid">
+          <!-- Personal Information Card -->
+          <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 client-info-card">
+            <div class="flex items-center space-x-3 mb-4">
+              <i data-feather="user" class="text-blue-400 w-6 h-6"></i>
+              <h2 class="text-xl font-semibold text-white">Personal Information</h2>
+            </div>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center py-2 border-b border-slate-700">
+                <span class="text-slate-300">First & Middle Names:</span>
+                <span class="text-white font-medium">Mark John</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-slate-700">
+                <span class="text-slate-300">Last Name:</span>
+                <span class="text-white font-medium">Branagh</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-slate-700">
+                <span class="text-slate-300">Primary Email:</span>
+                <span class="text-blue-400 font-medium">mark@bmcomposites.co</span>
+              </div>
+              <div class="flex justify-between items-center py-2">
+                <span class="text-slate-300">Secondary Email:</span>
+                <span class="text-blue-400 font-medium">markbranaghbmc@gmail.com</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact Information Card -->
+          <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 client-info-card">
+            <div class="flex items-center space-x-3 mb-4">
+              <i data-feather="phone" class="text-green-400 w-6 h-6"></i>
+              <h2 class="text-xl font-semibold text-white">Contact Information</h2>
+            </div>
+            <div class="space-y-4">
+              <div class="flex justify-between items-center py-2 border-b border-slate-700">
+                <span class="text-slate-300">Primary Contact:</span>
+                <span class="text-white font-medium">+34 627 287 863</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-slate-700">
+                <span class="text-slate-300">Contact Type:</span>
+                <span class="text-green-400 font-medium">Personal</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b border-slate-700">
+                <span class="text-slate-300">Representing:</span>
+                <span class="text-slate-300">Individual</span>
+              </div>
+              <div class="flex justify-between items-center py-2">
+                <span class="text-slate-300">Entity Type:</span>
+                <span class="text-slate-300">Private Client</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Risk Acknowledgment Card -->
+        <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 mb-6 client-info-card">
+          <div class="flex items-center space-x-3 mb-4">
+            <i data-feather="shield" class="text-yellow-400 w-6 h-6"></i>
+            <h2 class="text-xl font-semibold text-white">Risk Acknowledgment</h2>
+          </div>
+          <div class="space-y-4">
+            <div class="flex items-start space-x-3">
+              <i data-feather="check-circle" class="text-green-400 w-5 h-5 mt-1 flex-shrink-0"></i>
+              <div>
+                <p class="text-white font-medium mb-1">Crypto & DeFi Risk Acknowledgment</p>
+                <p class="text-slate-300 text-sm">Client acknowledges the risks of cryptocurrency and ultra high-risk decentralized finance accounts</p>
+              </div>
+            </div>
+            <div class="flex items-start space-x-3">
+              <i data-feather="check-circle" class="text-green-400 w-5 h-5 mt-1 flex-shrink-0"></i>
+              <div>
+                <p class="text-white font-medium mb-1">Geographic Compliance</p>
+                <p class="text-slate-300 text-sm">Client confirms they are not based in any restricted countries (US, Bolivia, Cambodia, Iran, Iraq, Libya, Nepal, Zimbabwe, Liberia, Myanmar, North Korea, BVI, Canada, Puerto Rico, US Virgin Islands)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compliance Information Card -->
+        <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 client-info-card">
+          <div class="flex items-center space-x-3 mb-4">
+            <i data-feather="file-text" class="text-purple-400 w-6 h-6"></i>
+            <h2 class="text-xl font-semibold text-white">Compliance & Legal</h2>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-3">
+              <h3 class="text-lg font-medium text-white mb-3">Investment Management</h3>
+              <div class="space-y-2">
+                <div class="flex items-center space-x-2">
+                  <i data-feather="x-circle" class="text-red-400 w-4 h-4"></i>
+                  <span class="text-slate-300">Not representing a company</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <i data-feather="x-circle" class="text-red-400 w-4 h-4"></i>
+                  <span class="text-slate-300">Not representing a VC entity</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                  <i data-feather="check-circle" class="text-green-400 w-4 h-4"></i>
+                  <span class="text-slate-300">Individual private client</span>
+                </div>
+              </div>
+            </div>
+            <div class="space-y-3">
+              <h3 class="text-lg font-medium text-white mb-3">Restricted Countries</h3>
+              <div class="text-slate-300 text-sm">
+                <p class="mb-2">Client confirms they are NOT based in:</p>
+                <div class="grid grid-cols-2 gap-1 text-xs">
+                  <span>• United States</span>
+                  <span>• Bolivia</span>
+                  <span>• Cambodia</span>
+                  <span>• Iran</span>
+                  <span>• Iraq</span>
+                  <span>• Libya</span>
+                  <span>• Nepal</span>
+                  <span>• Zimbabwe</span>
+                  <span>• Liberia</span>
+                  <span>• Myanmar</span>
+                  <span>• North Korea</span>
+                  <span>• British Virgin Islands</span>
+                  <span>• Canada</span>
+                  <span>• Puerto Rico</span>
+                  <span>• US Virgin Islands</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
   </div>
 
   <script>
@@ -1512,6 +1676,7 @@
     function showTransactions() {
       document.querySelector('main').classList.add('hidden');
       document.getElementById('transactionsPage').classList.remove('hidden');
+      document.getElementById('clientInfoPage').classList.add('hidden');
       
       // Update sidebar active state
       document.querySelectorAll('.nav-item').forEach(item => {
@@ -1522,9 +1687,24 @@
       document.querySelector('.nav-item:nth-child(2)').classList.remove('bg-slate-600');
     }
 
+    function showClientInfo() {
+      document.querySelector('main').classList.add('hidden');
+      document.getElementById('transactionsPage').classList.add('hidden');
+      document.getElementById('clientInfoPage').classList.remove('hidden');
+      
+      // Update sidebar active state
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('bg-slate-700');
+        item.classList.add('bg-slate-600');
+      });
+      document.querySelector('.nav-item:nth-child(3)').classList.add('bg-slate-700');
+      document.querySelector('.nav-item:nth-child(3)').classList.remove('bg-slate-600');
+    }
+
     function showOverview() {
       document.querySelector('main').classList.remove('hidden');
       document.getElementById('transactionsPage').classList.add('hidden');
+      document.getElementById('clientInfoPage').classList.add('hidden');
       
       // Update sidebar active state
       document.querySelectorAll('.nav-item').forEach(item => {
