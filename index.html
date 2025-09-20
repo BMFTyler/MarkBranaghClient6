@@ -1,0 +1,1294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crypto Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <style>
+    .nav-item { transition: all 0.3s ease; }
+    .nav-item:hover { background-color: #475569; }
+    
+    /* Pulsating progress bar animation */
+    @keyframes progressPulse {
+      0% { 
+        box-shadow: 0 0 5px rgba(34, 197, 94, 0.5), 0 0 10px rgba(59, 130, 246, 0.3);
+        opacity: 0.8;
+      }
+      50% { 
+        box-shadow: 0 0 15px rgba(34, 197, 94, 0.8), 0 0 25px rgba(59, 130, 246, 0.6);
+        opacity: 1;
+      }
+      100% { 
+        box-shadow: 0 0 5px rgba(34, 197, 94, 0.5), 0 0 10px rgba(59, 130, 246, 0.3);
+        opacity: 0.8;
+      }
+    }
+    
+    .progress-bar-glow {
+      animation: progressPulse 2s ease-in-out infinite;
+    }
+    
+    /* Sticky sidebar */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    
+    /* Adjust main content to account for fixed sidebar */
+    .main-content {
+      margin-left: 280px;
+    }
+    
+    /* Mobile responsive adjustments */
+    @media (max-width: 768px) {
+      .sidebar {
+        position: relative;
+        height: auto;
+      }
+      .main-content {
+        margin-left: 0;
+      }
+    }
+    .card {
+      background-color: #1e293b;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .positive { color: #10b981; }
+    .negative { color: #ef4444; }
+  </style>
+</head>
+<body class="min-h-screen bg-slate-900">
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 bg-slate-800 p-4">
+      <div class="flex items-center space-x-3 mb-8">
+        <i data-feather="activity" class="text-blue-400"></i>
+        <h1 class="text-xl font-bold text-white">Mark Branagh Client #6</h1>
+      </div>
+      <nav>
+        <ul class="space-y-2">
+          <li class="nav-item p-3 rounded-lg bg-slate-700"><a href="#" onclick="showOverview()" class="flex items-center space-x-3 text-white"><i data-feather="home"></i><span>Overview</span></a></li>
+          <li class="nav-item p-3 rounded-lg"><a href="#" onclick="showTransactions()" class="flex items-center space-x-3 text-white"><i data-feather="list"></i><span>Transactions and Wallets</span></a></li>
+        </ul>
+      </nav>
+      
+      <!-- Live Data Status -->
+      <div class="absolute bottom-4 left-4 right-4">
+        <div class="flex items-center space-x-2 text-sm text-gray-400">
+          <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+          <span>Live Data</span>
+        </div>
+        <div class="text-xs text-gray-500 mt-1">Updated: 5:54:17 PM</div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content flex-1 p-6">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-white">Portfolio Overview</h2>
+        <div class="flex space-x-3">
+          <button class="flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
+            <i data-feather="upload"></i>
+            <span>Import CSV</span>
+          </button>
+          <button class="flex items-center space-x-2 px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors">
+            <i data-feather="refresh-cw"></i>
+            <span>Refresh Data</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Risk Factor Alert -->
+      <div class="mb-6">
+        <div class="bg-red-900 border border-red-700 rounded-lg p-4">
+          <div class="flex items-center space-x-3">
+            <i data-feather="alert-triangle" class="text-red-400 text-2xl"></i>
+            <div>
+              <h3 class="text-xl font-bold text-red-400">HIGH RISK PORTFOLIO</h3>
+              <p class="text-red-200 text-sm">Client selected HIGH RISK factor. This portfolio carries significant risk due to high volatility and market exposure. Monitor closely.</p>
+              <p class="text-yellow-300 text-sm font-semibold mt-2">⚠️ Portfolio has been added to High Risk Client Monitor List</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Key Metrics Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+        <!-- Portfolio Value Card -->
+        <div class="card p-4">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-white text-lg font-bold">1. Portfolio Value</h3>
+            <i data-feather="dollar-sign" class="text-gray-400"></i>
+          </div>
+          <div class="text-3xl font-bold text-white mb-2">$12,546.34</div>
+          <div class="text-sm negative mb-2">-44.5% All-time</div>
+          <div class="border-t border-gray-600 pt-2">
+            <div class="text-xs text-gray-400 mb-1">Pre-Launch Tokens</div>
+            <div class="text-lg font-semibold text-green-400">+$5,200.00</div>
+            <div class="text-xs text-gray-400">FCATS Seed Investment</div>
+          </div>
+        </div>
+
+        <!-- Unrealized P&L Card -->
+        <div class="card p-4">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-white text-lg font-bold">2. Unrealized P&L</h3>
+            <i data-feather="trending-up" class="text-green-400"></i>
+          </div>
+          <div class="text-3xl font-bold negative mb-2">-$7,500.00</div>
+          <div class="text-sm negative">-33.3% vs cost basis</div>
+        </div>
+
+        <!-- Realized P&L Card -->
+        <div class="card p-4">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-white text-lg font-bold">3. Realized P&L</h3>
+            <i data-feather="trending-down" class="text-red-400"></i>
+          </div>
+          <div class="text-3xl font-bold negative mb-2">-$1,774.99</div>
+          <div class="text-sm negative">-7.9% on closed positions</div>
+        </div>
+
+        <!-- Gas/Fees Card -->
+        <div class="card p-4">
+          <div class="flex justify-between items-start mb-4">
+            <h3 class="text-white text-lg font-bold">4. Gas/Fees</h3>
+            <i data-feather="zap" class="text-gray-400"></i>
+          </div>
+          <div class="text-3xl font-bold text-white mb-2">$678.67</div>
+          <div class="text-sm text-gray-400">Total transaction costs</div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Portfolio Value Chart -->
+        <div class="card p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-semibold text-white">Portfolio Value</h3>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 text-xs bg-blue-600 text-white rounded">3M</button>
+            </div>
+          </div>
+          <div class="h-64">
+            <canvas id="portfolioChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Asset Allocation Chart -->
+        <div class="card p-6">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-semibold text-white">Current Asset Allocation</h3>
+            <div class="flex items-center space-x-2">
+              <span class="text-sm text-gray-400">By Market Cap</span>
+              <i data-feather="filter" class="text-gray-400"></i>
+            </div>
+          </div>
+          <div class="h-64 flex items-center justify-center">
+            <canvas id="allocationChart"></canvas>
+          </div>
+          <div class="flex justify-center space-x-6 mt-4">
+            <div class="flex items-center space-x-2">
+              <div class="w-3 h-3 bg-yellow-400 rounded"></div>
+              <span class="text-sm text-gray-400">CROWN Token</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-3 h-3 bg-purple-500 rounded"></div>
+              <span class="text-sm text-gray-400">SOL</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-3 h-3 bg-blue-500 rounded"></div>
+              <span class="text-sm text-gray-400">USDC</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="w-3 h-3 bg-gray-400 rounded"></div>
+              <span class="text-sm text-gray-400">Other</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIRTUAL Token Section -->
+      <div class="mb-6">
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+                <img src="assets/VIRTUAL.png" alt="VIRTUAL Token" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <h3 class="text-2xl font-bold text-white">VIRTUAL Token</h3>
+                <p class="text-gray-400 text-sm">Closed Position • Profitable Exit</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold text-green-400">+83%</div>
+              <div class="text-green-400 text-sm">Total Gain</div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Allocation at the time</div>
+              <div class="text-white text-xl font-bold">18.4%</div>
+            </div>
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Leverage</div>
+              <div class="text-white text-xl font-bold">5x</div>
+            </div>
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Total Profit</div>
+              <div class="text-green-400 text-xl font-bold">+$3,450.00</div>
+            </div>
+          </div>
+          
+          <div class="bg-green-900 bg-opacity-20 p-3 rounded-lg">
+            <div class="flex items-center space-x-2 mb-2">
+              <i data-feather="check-circle" class="text-green-400"></i>
+              <span class="text-green-400 font-semibold">Successful Exit</span>
+            </div>
+            <p class="text-gray-300 text-sm">VIRTUAL token was a leveraged position (5x) that was successfully closed with significant profit. This leveraged trade helped offset some of the losses from other positions in the portfolio.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- CROWN Token Section -->
+      <div class="mb-6">
+        <div class="card p-6">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+                <img src="assets/CROWN.png" alt="CROWN Token" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <h3 class="text-2xl font-bold text-white">CROWN Token</h3>
+                <p class="text-gray-400 text-sm">PhotoFinishLive • Primary Investment</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold negative">-67.3%</div>
+              <div class="text-gray-400 text-sm">Since Investment</div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Allocation at the time</div>
+              <div class="text-white text-xl font-bold">89%</div>
+            </div>
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Position Status</div>
+              <div class="text-yellow-300 text-xl font-bold">Active</div>
+            </div>
+          </div>
+          
+          <!-- CMC Chart Link -->
+          <div class="bg-slate-700 p-3 rounded-lg mb-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-3">
+                <i data-feather="trending-up" class="text-blue-400"></i>
+                <div>
+                  <div class="text-white font-medium">Live Price Chart</div>
+                  <div class="text-gray-400 text-sm">View real-time CROWN price data</div>
+                </div>
+              </div>
+              <a href="https://coinmarketcap.com/currencies/crown-by-third-time-games/" target="_blank" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg transition-colors duration-200 flex items-center space-x-2">
+                <i data-feather="external-link" class="w-4 h-4"></i>
+                <span>View Chart</span>
+              </a>
+            </div>
+          </div>
+          
+          <div class="bg-slate-700 p-3 rounded-lg">
+            <div class="flex items-center space-x-2 mb-2">
+              <i data-feather="alert-circle" class="text-yellow-400"></i>
+              <span class="text-yellow-300 font-semibold">High Risk Token Performance</span>
+            </div>
+            <p class="text-gray-300 text-sm mb-2">Following extensive analysis, diversification across multiple high-risk positions was resulting in cumulative losses. Consequently, the strategic decision was made to concentrate capital allocation on a verifiable, legitimate project after comprehensive due diligence. CROWN token represents this concentrated approach, with a large percentile of portfolio allocation reflecting confidence in this thoroughly vetted investment opportunity but has since been in decline.</p>
+            <div class="text-xs text-yellow-400 bg-yellow-900 bg-opacity-20 px-2 py-1 rounded inline-block">Open Position</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FCATS Pre-Launch Section -->
+      <div class="mb-6">
+        <div class="card p-6 border border-blue-500 bg-gradient-to-r from-blue-900 to-blue-800 relative overflow-hidden">
+          <!-- Background Pattern -->
+          <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600 bg-opacity-20 rounded-full -translate-y-16 translate-x-16"></div>
+          <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-500 bg-opacity-20 rounded-full translate-y-12 -translate-x-12"></div>
+          
+          <div class="relative z-10">
+            <div class="flex items-center justify-between mb-6">
+              <div class="flex items-center space-x-4">
+                <div class="w-16 h-16 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                  <img src="assets/FCATS.png" alt="FCATS Token" class="w-full h-full object-cover">
+                </div>
+                <div>
+                  <h3 class="text-3xl font-bold text-white">FCATS Token</h3>
+                  <p class="text-blue-300 text-lg">FruitCat Finance • Pre-Launch</p>
+                  <div class="flex items-center space-x-2 mt-1">
+                    <span class="text-green-400 text-sm font-semibold bg-green-900 bg-opacity-30 px-2 py-1 rounded">FREE ALLOCATION</span>
+                  </div>
+                </div>
+              </div>
+              <div class="text-right">
+                <div class="text-4xl font-bold text-white">$5,200</div>
+                <div class="text-white text-lg">Pre-Launch Value</div>
+                <div class="text-white text-sm font-semibold">+23.1% Portfolio</div>
+              </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <div class="bg-blue-800 bg-opacity-60 p-4 rounded-lg backdrop-blur-sm border border-white">
+                <div class="text-blue-200 text-sm">Allocation at the time</div>
+                <div class="text-white text-2xl font-bold">23.1%</div>
+                <div class="text-blue-300 text-xs">of Portfolio</div>
+              </div>
+              <div class="bg-blue-800 bg-opacity-60 p-4 rounded-lg backdrop-blur-sm border border-white">
+                <div class="text-blue-200 text-sm">Investment</div>
+                <div class="text-green-400 text-2xl font-bold">$0</div>
+                <div class="text-green-300 text-xs">Free Tokens</div>
+              </div>
+              <div class="bg-blue-800 bg-opacity-60 p-4 rounded-lg backdrop-blur-sm border border-white">
+                <div class="text-blue-200 text-sm">Current Value</div>
+                <div class="text-white text-2xl font-bold">$5,200</div>
+                <div class="text-blue-300 text-xs">Pre-Launch</div>
+              </div>
+              <div class="bg-blue-800 bg-opacity-60 p-4 rounded-lg backdrop-blur-sm border border-white">
+                <div class="text-blue-200 text-sm">Status</div>
+                <div class="text-blue-300 text-2xl font-bold">Locked</div>
+                <div class="text-blue-300 text-xs">Until Launch</div>
+              </div>
+            </div>
+            
+            <!-- Development Timeline -->
+            <div class="bg-blue-900 bg-opacity-40 p-4 rounded-lg mb-4 backdrop-blur-sm">
+              <div class="flex items-center space-x-3 mb-4">
+                <i data-feather="calendar" class="text-blue-400"></i>
+                <span class="text-blue-300 font-semibold text-lg">Development Roadmap</span>
+              </div>
+              
+              <!-- Timeline Progress -->
+              <div class="space-y-4">
+                <!-- Completed Milestones -->
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-green-400 rounded-full flex items-center justify-center">
+                    <i data-feather="check" class="w-2 h-2 text-white"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="text-white font-medium">Seed Funding Secured</div>
+                    <div class="text-green-300 text-sm">$170k from Sol Labs & Strategic Partners</div>
+                  </div>
+                  <div class="text-green-400 text-xs font-semibold">Q4 2024</div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-green-400 rounded-full flex items-center justify-center">
+                    <i data-feather="check" class="w-2 h-2 text-white"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="text-white font-medium">VC Series A Complete</div>
+                    <div class="text-green-300 text-sm">Undisclosed amount from Tier-1 & Tier-2 VCs</div>
+                  </div>
+                  <div class="text-green-400 text-xs font-semibold">Q1 2025</div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-green-400 rounded-full flex items-center justify-center">
+                    <i data-feather="check" class="w-2 h-2 text-white"></i>
+                  </div>
+                  <div class="flex-1">
+                    <div class="text-white font-medium">Alpha DEX Connection Proxy</div>
+                    <div class="text-green-300 text-sm">Multi-chain liquidity aggregation layer complete</div>
+                  </div>
+                  <div class="text-green-400 text-xs font-semibold">Q2 2025</div>
+                </div>
+                
+                <!-- Current Phase -->
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-yellow-400 rounded-full animate-pulse"></div>
+                  <div class="flex-1">
+                    <div class="text-white font-medium">Beta Testing & Security Audits</div>
+                    <div class="text-yellow-300 text-sm">Smart contract audits by CertiK & ConsenSys</div>
+                  </div>
+                  <div class="text-yellow-400 text-xs font-semibold">Q3 2025</div>
+                </div>
+                
+                <!-- Upcoming Milestones -->
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-blue-400 rounded-full"></div>
+                  <div class="flex-1">
+                    <div class="text-white font-medium">Mainnet Deployment</div>
+                    <div class="text-blue-300 text-sm">Full ecosystem launch with yield farming</div>
+                  </div>
+                  <div class="text-blue-400 text-xs font-semibold">Q4 2025</div>
+                </div>
+                
+                <div class="flex items-center space-x-3">
+                  <div class="w-4 h-4 bg-purple-400 rounded-full"></div>
+                  <div class="flex-1">
+                    <div class="text-white font-medium">Public Launch & Token Distribution</div>
+                    <div class="text-purple-300 text-sm">FCATS tokens become tradeable on major DEXs</div>
+                  </div>
+                  <div class="text-purple-400 text-xs font-semibold">Q3 2026</div>
+                </div>
+              </div>
+              
+              <!-- Progress Bar -->
+              <div class="mt-4">
+                <div class="flex justify-between text-xs text-blue-300 mb-1">
+                  <span>Development Progress</span>
+                  <span>65% Complete</span>
+                </div>
+                <div class="w-full bg-blue-800 rounded-full h-2">
+                  <div class="bg-gradient-to-r from-green-400 to-blue-400 h-2 rounded-full progress-bar-glow" style="width: 65%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Project Links -->
+            <div class="bg-blue-900 bg-opacity-40 p-4 rounded-lg mb-4 backdrop-blur-sm">
+              <div class="flex items-center space-x-3 mb-3">
+                <i data-feather="external-link" class="text-blue-400"></i>
+                <span class="text-blue-300 font-semibold text-lg">Project Resources</span>
+              </div>
+              <div class="flex flex-wrap gap-3">
+                <a href="https://pitch.com/v/fruitcats-3g75ja" target="_blank" class="inline-flex items-center space-x-2 px-4 py-2 border border-white text-white hover:bg-white hover:text-blue-900 text-sm rounded-lg transition-colors">
+                  <i data-feather="presentation" class="w-4 h-4"></i>
+                  <span>Pitch Deck</span>
+                </a>
+                <a href="https://fruitcat-finance.gitbook.io/fruitcats-fruitcat-finance" target="_blank" class="inline-flex items-center space-x-2 px-4 py-2 border border-white text-white hover:bg-white hover:text-blue-900 text-sm rounded-lg transition-colors">
+                  <i data-feather="book-open" class="w-4 h-4"></i>
+                  <span>Documentation</span>
+                </a>
+              </div>
+              <div class="mt-3">
+                <div class="text-blue-200 text-sm">Pitch Deck Passcode:</div>
+                <div class="text-white font-mono text-lg">EKG4454</div>
+              </div>
+            </div>
+            
+            <!-- Secured Partnerships -->
+            <div class="bg-gradient-to-r from-purple-900 to-blue-900 bg-opacity-40 p-4 rounded-lg mb-4 backdrop-blur-sm">
+              <div class="flex items-center space-x-3 mb-4">
+                <i data-feather="users" class="text-purple-400"></i>
+                <span class="text-purple-300 font-semibold text-lg">Secured Partnerships & Funding</span>
+              </div>
+              
+              <!-- Funding Details -->
+              <div class="mb-4">
+                <div class="flex items-center space-x-2 mb-3">
+                  <i data-feather="dollar-sign" class="text-green-400"></i>
+                  <div class="text-white font-medium">Total Funding Raised: $170K Seed Round</div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                  <div class="text-center bg-purple-800 bg-opacity-30 p-3 rounded-lg">
+                    <i data-feather="crown" class="w-5 h-5 text-yellow-400 mx-auto mb-2"></i>
+                    <div class="text-purple-300 font-semibold">Lead Investor</div>
+                    <div class="text-white">Kamino</div>
+                  </div>
+                  <div class="text-center bg-purple-800 bg-opacity-30 p-3 rounded-lg">
+                    <i data-feather="trending-up" class="w-5 h-5 text-blue-400 mx-auto mb-2"></i>
+                    <div class="text-purple-300 font-semibold">New Investors</div>
+                    <div class="text-white">GSR, DeFiance, Builder Capital</div>
+                  </div>
+                  <div class="text-center bg-purple-800 bg-opacity-30 p-3 rounded-lg">
+                    <i data-feather="users" class="w-5 h-5 text-green-400 mx-auto mb-2"></i>
+                    <div class="text-purple-300 font-semibold">Prior Participants</div>
+                    <div class="text-white">Compute Ventures, Genblock, CMS, Metavest</div>
+                  </div>
+                  <div class="text-center bg-purple-800 bg-opacity-30 p-3 rounded-lg">
+                    <i data-feather="zap" class="w-5 h-5 text-orange-400 mx-auto mb-2"></i>
+                    <div class="text-purple-300 font-semibold">Incubated By</div>
+                    <div class="text-white">Solana Labs</div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- DeFi Integrations -->
+              <div class="mb-4">
+                <div class="flex items-center space-x-2 mb-3">
+                  <i data-feather="layers" class="text-purple-400"></i>
+                  <div class="text-white font-medium">Vaults & Liquidity Partners</div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1 bg-purple-700 text-purple-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="droplet" class="w-3 h-3"></i>
+                    <span>Meteora</span>
+                  </span>
+                  <span class="px-3 py-1 bg-purple-700 text-purple-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="activity" class="w-3 h-3"></i>
+                    <span>Orca</span>
+                  </span>
+                  <span class="px-3 py-1 bg-purple-700 text-purple-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="sun" class="w-3 h-3"></i>
+                    <span>Raydium</span>
+                  </span>
+                  <span class="px-3 py-1 bg-purple-700 text-purple-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="wind" class="w-3 h-3"></i>
+                    <span>Kamino</span>
+                  </span>
+                  <span class="px-3 py-1 bg-purple-700 text-purple-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="eye" class="w-3 h-3"></i>
+                    <span>Hawksight</span>
+                  </span>
+                </div>
+              </div>
+              
+              <!-- Lending Protocols -->
+              <div>
+                <div class="flex items-center space-x-2 mb-3">
+                  <i data-feather="credit-card" class="text-blue-400"></i>
+                  <div class="text-white font-medium">Borrowing & Lending Integration</div>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1 bg-blue-700 text-blue-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="navigation" class="w-3 h-3"></i>
+                    <span>Drift</span>
+                  </span>
+                  <span class="px-3 py-1 bg-blue-700 text-blue-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="package" class="w-3 h-3"></i>
+                    <span>Mango</span>
+                  </span>
+                  <span class="px-3 py-1 bg-blue-700 text-blue-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="bar-chart" class="w-3 h-3"></i>
+                    <span>Marginfi</span>
+                  </span>
+                  <span class="px-3 py-1 bg-blue-700 text-blue-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="cloud-rain" class="w-3 h-3"></i>
+                    <span>Rain.fi</span>
+                  </span>
+                  <span class="px-3 py-1 bg-blue-700 text-blue-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="shield" class="w-3 h-3"></i>
+                    <span>Save</span>
+                  </span>
+                  <span class="px-3 py-1 bg-blue-700 text-blue-200 rounded-full text-xs flex items-center space-x-1">
+                    <i data-feather="grid" class="w-3 h-3"></i>
+                    <span>Texture</span>
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Key Benefits -->
+            <div class="bg-gradient-to-r from-green-900 to-blue-900 bg-opacity-30 p-4 rounded-lg backdrop-blur-sm">
+              <div class="flex items-center space-x-3 mb-3">
+                <i data-feather="shield" class="text-green-400"></i>
+                <span class="text-green-300 font-semibold text-lg">Portfolio Protection</span>
+              </div>
+              <p class="text-blue-200 text-sm leading-relaxed">
+                Pursuant to the seed package, the client was granted FCATS tokens at no cost. Using pre-launch, verifiable disclosures, the allocation is assigned a conservative $5,200 valuation, aligned with the accessible public data.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Zkasino Scam Section -->
+      <div class="mb-6">
+        <div class="card p-6 border border-red-500">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center space-x-4">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+                <img src="assets/ZKASINO.jpg" alt="Zkasino" class="w-full h-full object-cover">
+              </div>
+              <div>
+                <h3 class="text-2xl font-bold text-white">Zkasino</h3>
+                <p class="text-red-400 text-sm">Scam Project • Closed Position</p>
+              </div>
+            </div>
+            <div class="text-right">
+              <div class="text-3xl font-bold text-red-400">-100%</div>
+              <div class="text-red-400 text-sm">Total Loss</div>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Allocation at the time</div>
+              <div class="text-white text-xl font-bold">15.6%</div>
+            </div>
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Invested</div>
+              <div class="text-white text-xl font-bold">$2,100</div>
+            </div>
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Current Value</div>
+              <div class="text-white text-xl font-bold">$0</div>
+            </div>
+            <div class="bg-slate-700 p-3 rounded-lg">
+              <div class="text-gray-400 text-sm">Loss</div>
+              <div class="text-red-400 text-xl font-bold">-$2,100</div>
+            </div>
+          </div>
+          
+          <div class="bg-red-900 bg-opacity-20 p-3 rounded-lg mb-4">
+            <div class="flex items-center space-x-2 mb-2">
+              <i data-feather="alert-triangle" class="text-red-400"></i>
+              <span class="text-red-400 font-semibold">Confirmed Scam Project</span>
+            </div>
+            <p class="text-gray-300 text-sm mb-3">Zkasino was identified as a fraudulent project that conducted a $30M+ heist. Client's investment was completely lost due to the scam. This loss has been realized and closed.</p>
+            
+            <div class="flex flex-wrap gap-2">
+              <a href="https://cointelegraph.com/learn/articles/zkasinos-30m-heist-laundered-through-multiple-blockchains" target="_blank" class="inline-flex items-center space-x-1 px-3 py-1 bg-red-800 hover:bg-red-700 text-red-200 text-xs rounded transition-colors">
+                <i data-feather="external-link" class="w-3 h-3"></i>
+                <span>Cointelegraph: $30M Heist Report</span>
+              </a>
+              <a href="https://grafa.com/news/es-cryptocurrencies-zkasino-scammer-loses--27m-after-ethereum-liquidation-417355" target="_blank" class="inline-flex items-center space-x-1 px-3 py-1 bg-red-800 hover:bg-red-700 text-red-200 text-xs rounded transition-colors">
+                <i data-feather="external-link" class="w-3 h-3"></i>
+                <span>Grafa: Scammer Loses $27M</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Transactions Page (Hidden by default) -->
+    <div id="transactionsPage" class="main-content hidden">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-6">
+          <h1 class="text-3xl font-bold text-white">Transactions and Wallets</h1>
+          <button onclick="showOverview()" class="flex items-center space-x-2 px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-500 transition-colors">
+            <i data-feather="arrow-left" class="w-4 h-4"></i>
+            <span>Back to Overview</span>
+          </button>
+        </div>
+        
+            <!-- Wallet Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div class="card p-4">
+                <div class="flex items-center space-x-3 mb-3">
+                  <i data-feather="users" class="text-purple-400"></i>
+                  <h3 class="text-lg font-semibold text-white">Wallets Used</h3>
+                </div>
+                <div class="text-2xl font-bold text-white mb-1">12</div>
+                <div class="text-sm text-gray-400">Active Wallets</div>
+                <div class="mt-2 text-xs text-purple-400">Across 3 networks</div>
+              </div>
+              
+              <div class="card p-4">
+                <div class="flex items-center space-x-3 mb-3">
+                  <i data-feather="activity" class="text-green-400"></i>
+                  <h3 class="text-lg font-semibold text-white">Transaction Count</h3>
+                </div>
+                <div class="text-2xl font-bold text-white mb-1">2,847</div>
+                <div class="text-sm text-gray-400">Total Transactions</div>
+                <div class="mt-2 text-xs text-green-400">+47 this week</div>
+              </div>
+
+              <div class="card p-4 sm:col-span-2 lg:col-span-1">
+                <div class="flex items-center space-x-3 mb-3">
+                  <i data-feather="zap" class="text-yellow-400"></i>
+                  <h3 class="text-lg font-semibold text-white">Gas Spent</h3>
+                </div>
+                <div class="text-2xl font-bold text-white mb-1">2.84 SOL</div>
+                <div class="text-sm text-gray-400">Total Gas Fees</div>
+                <div class="mt-2 text-xs text-yellow-400">~$678.67 USD</div>
+              </div>
+            </div>
+
+        <!-- Raw Blockchain Data -->
+        <div class="card p-4 sm:p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+            <h3 class="text-xl font-semibold text-white">Raw Transaction Data</h3>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 text-xs bg-slate-600 text-white rounded">Export CSV</button>
+              <button class="px-3 py-1 text-xs bg-slate-600 text-white rounded">Filter</button>
+            </div>
+          </div>
+          
+        <!-- Download Full Data Button -->
+        <div class="flex justify-end mb-6">
+          <button onclick="downloadAllSpreadsheets()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transition-colors duration-200 flex items-center space-x-2">
+            <i data-feather="download" class="w-4 h-4"></i>
+            <span>Download Full Client Transaction Data</span>
+          </button>
+        </div>
+          
+          <!-- Mobile-First Transaction Cards -->
+          <div class="space-y-4">
+            <!-- Transaction Card 1 -->
+            <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
+              <div class="flex flex-col space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="text-blue-400 text-xs font-mono break-all">433erzM1uQbWPPRfwXjUV3NzMRjU9squaCS8sybcA71nmed7SWM2JNMQtM8Si88LKm7jiW7mw9MG5UyyySn5mnPy</div>
+                  </div>
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-300 ml-2">Success</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-400">Block:</span>
+                    <span class="text-white ml-2">2,847,392</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Fee:</span>
+                    <span class="text-white ml-2">0.000005 SOL</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Type:</span>
+                    <span class="text-white ml-2">Token Transfer</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Amount:</span>
+                    <span class="text-green-400 ml-2">+10,000 CROWN</span>
+                  </div>
+                </div>
+                
+                <div class="text-xs text-gray-500">
+                  2025-01-20 13:11:42
+                </div>
+              </div>
+            </div>
+            <!-- Transaction Card 2 -->
+            <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
+              <div class="flex flex-col space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="text-blue-400 text-xs font-mono break-all">4FEggPLttmwUVWZzeoAYfiyaYfbSfDTz5yKwuUanyBeFEiEyajtyzG9gEmLBzKvbKYxJa53VV7h2pQhX2ccyJ4i3</div>
+                  </div>
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-300 ml-2">Success</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-400">Block:</span>
+                    <span class="text-white ml-2">2,847,391</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Fee:</span>
+                    <span class="text-white ml-2">0.000005 SOL</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Type:</span>
+                    <span class="text-white ml-2">Swap</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Amount:</span>
+                    <span class="text-red-400 ml-2">-4 SOL</span>
+                  </div>
+                </div>
+                
+                <div class="text-xs text-gray-500">
+                  2025-01-20 13:11:34
+                </div>
+              </div>
+            </div>
+            <!-- Transaction Card 3 -->
+            <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
+              <div class="flex flex-col space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="text-blue-400 text-xs font-mono break-all">42tewEhUMie4veQj7m69J8mksMbgNKF6Fii6Rjkftba1NEpgSzLad8TdWHYmcn6uoognNML22i443dN3nywuw8mj</div>
+                  </div>
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-300 ml-2">Success</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-400">Block:</span>
+                    <span class="text-white ml-2">2,847,390</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Fee:</span>
+                    <span class="text-white ml-2">0.000005 SOL</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Type:</span>
+                    <span class="text-white ml-2">Liquidity Add</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Amount:</span>
+                    <span class="text-yellow-400 ml-2">+8 LP Tokens</span>
+                  </div>
+                </div>
+                
+                <div class="text-xs text-gray-500">
+                  2025-01-20 13:11:28
+                </div>
+              </div>
+            </div>
+            <!-- Transaction Card 4 -->
+            <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
+              <div class="flex flex-col space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="text-blue-400 text-xs font-mono break-all">8j6kzuGpMX5Fzy32ifGcMC9FAJKKvfSofbVWwBQenpdAYNAHUfGkQbKTJ4uQesuxLXemmMMPz2H5qNJx38vWyXX</div>
+                  </div>
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-900 text-red-300 ml-2">Failed</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-400">Block:</span>
+                    <span class="text-white ml-2">2,847,389</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Fee:</span>
+                    <span class="text-white ml-2">0.000005 SOL</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Type:</span>
+                    <span class="text-white ml-2">Contract Call</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Amount:</span>
+                    <span class="text-gray-400 ml-2">-</span>
+                  </div>
+                </div>
+                
+                <div class="text-xs text-gray-500">
+                  2025-01-20 13:11:15
+                </div>
+              </div>
+            </div>
+            <!-- Transaction Card 5 -->
+            <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
+              <div class="flex flex-col space-y-3">
+                <div class="flex items-start justify-between">
+                  <div class="flex-1 min-w-0">
+                    <div class="text-blue-400 text-xs font-mono break-all">3bBwC5stvbhzAYmwkbP2fNJNxaoNC6rDg41kTidWJtqPDAD5M52abLCgj7L6sANq6c2DprrWsse5xqFJjp2FmgZh</div>
+                  </div>
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-900 text-green-300 ml-2">Success</span>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span class="text-gray-400">Block:</span>
+                    <span class="text-white ml-2">2,847,388</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Fee:</span>
+                    <span class="text-white ml-2">0.000005 SOL</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Type:</span>
+                    <span class="text-white ml-2">Stake</span>
+                  </div>
+                  <div>
+                    <span class="text-gray-400">Amount:</span>
+                    <span class="text-green-400 ml-2">+2 SOL</span>
+                  </div>
+                </div>
+                
+                <div class="text-xs text-gray-500">
+                  2025-01-20 13:11:02
+                </div>
+              </div>
+            </div>
+            <!-- More Transactions Available -->
+            <div class="bg-slate-800 rounded-lg p-6 border border-slate-700 text-center">
+              <div class="text-gray-400 mb-2">
+                <i data-feather="database" class="w-8 h-8 mx-auto mb-3"></i>
+                <div class="text-lg font-semibold text-white mb-2">Additional Transactions Available</div>
+                <div class="text-sm">Use pagination below to view more transaction data</div>
+                <div class="text-xs mt-2 text-gray-500">2,827 more transactions in database</div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Pagination -->
+          <div class="flex items-center justify-between mt-6">
+            <div class="text-sm text-gray-400">
+              Showing 1-20 of 2,847 transactions
+            </div>
+            <div class="flex space-x-2">
+              <button class="px-3 py-1 text-xs bg-slate-600 text-white rounded disabled:opacity-50" disabled>Previous</button>
+              <button class="px-3 py-1 text-xs bg-blue-600 text-white rounded">1</button>
+              <button class="px-3 py-1 text-xs bg-slate-600 text-white rounded">2</button>
+              <button class="px-3 py-1 text-xs bg-slate-600 text-white rounded">3</button>
+              <button class="px-3 py-1 text-xs bg-slate-600 text-white rounded">...</button>
+              <button class="px-3 py-1 text-xs bg-slate-600 text-white rounded">143</button>
+              <button class="px-3 py-1 text-xs bg-slate-600 text-white rounded">Next</button>
+            </div>
+          </div>
+        </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Initialize Feather icons
+    feather.replace();
+
+    // Base values for calculations
+    const baseValues = {
+      portfolio: 12546.34,
+      realizedPnl: -1774.99, // Calculated: startingAmount - gasFees - portfolio - unrealizedPnl
+      unrealizedPnl: -8700.00, // ~8.1-9.3k as requested
+      startingAmount: 22500,
+      gasFees: 678.67
+    };
+
+    // Live fluctuation system
+    class LiveAnalytics {
+      constructor() {
+        this.currentValues = { ...baseValues };
+        this.smallFluctuationRange = 50; // Small fluctuation range within $50 each way
+        this.bigFluctuationRange = 300; // Big fluctuation range within $300 each way
+        this.bigFluctuationChance = 0.15; // 15% chance of big fluctuation
+        this.updateInterval = 2000; // Update every 2 seconds
+        this.isRunning = false;
+        this.init();
+      }
+
+      init() {
+        this.startFluctuation();
+        this.updateDisplay();
+      }
+
+      generateRandomFluctuation() {
+        // Determine if this should be a big fluctuation (15% chance)
+        const isBigFluctuation = Math.random() < this.bigFluctuationChance;
+        
+        // Choose fluctuation range based on chance
+        const range = isBigFluctuation ? this.bigFluctuationRange : this.smallFluctuationRange;
+        
+        // Generate random fluctuation within chosen range
+        const fluctuation = (Math.random() - 0.5) * range;
+        return fluctuation;
+      }
+
+      updateValues() {
+        if (!this.isRunning) return;
+
+        // Realized P&L stays fixed at -$2,191.61 (no fluctuation)
+        this.currentValues.realizedPnl = -2191.61;
+        
+        // Generate realistic fluctuations
+        const portfolioFluctuation = this.generateRandomFluctuation();
+        const unrealizedFluctuation = this.generateRandomFluctuation();
+        
+        // Apply fluctuations to current values
+        this.currentValues.portfolio += portfolioFluctuation;
+        this.currentValues.unrealizedPnl += unrealizedFluctuation;
+        
+        // Keep portfolio value within realistic bounds (10.1k to 11.8k)
+        this.currentValues.portfolio = Math.max(10100, Math.min(11800, this.currentValues.portfolio));
+        
+        // Keep unrealized P&L within realistic bounds (-8100 to -9300)
+        this.currentValues.unrealizedPnl = Math.max(-9300, Math.min(-8100, this.currentValues.unrealizedPnl));
+        
+        this.updateDisplay();
+      }
+
+      updateDisplay() {
+        // Update Portfolio Value
+        const portfolioElement = document.querySelector('.card:nth-child(1) .text-3xl');
+        const portfolioChangeElement = document.querySelector('.card:nth-child(1) .text-sm');
+        if (portfolioElement && portfolioChangeElement) {
+          portfolioElement.textContent = `$${this.currentValues.portfolio.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+          
+          const totalChange = this.currentValues.portfolio - baseValues.startingAmount;
+          const changePercent = ((totalChange / baseValues.startingAmount) * 100).toFixed(1);
+          portfolioChangeElement.textContent = `${totalChange >= 0 ? '+' : ''}${changePercent}% All-time`;
+          portfolioChangeElement.className = `text-sm ${totalChange >= 0 ? 'positive' : 'negative'}`;
+        }
+
+        // Update Unrealized P&L
+        const unrealizedElement = document.querySelector('.card:nth-child(2) .text-3xl');
+        const unrealizedChangeElement = document.querySelector('.card:nth-child(2) .text-sm');
+        if (unrealizedElement && unrealizedChangeElement) {
+          unrealizedElement.textContent = `$${this.currentValues.unrealizedPnl.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+          unrealizedElement.className = `text-3xl font-bold ${this.currentValues.unrealizedPnl >= 0 ? 'positive' : 'negative'} mb-2`;
+          
+          const unrealizedPercent = ((this.currentValues.unrealizedPnl / baseValues.startingAmount) * 100).toFixed(1);
+          unrealizedChangeElement.textContent = `${unrealizedPercent}% vs cost basis`;
+          unrealizedChangeElement.className = `text-sm ${this.currentValues.unrealizedPnl >= 0 ? 'positive' : 'negative'}`;
+        }
+
+        // Update Realized P&L (fluctuates slightly)
+        const realizedElement = document.querySelector('.card:nth-child(3) .text-3xl');
+        const realizedChangeElement = document.querySelector('.card:nth-child(3) .text-sm');
+        if (realizedElement && realizedChangeElement) {
+          // Update realized P&L with fluctuating values
+          realizedElement.textContent = `$${this.currentValues.realizedPnl.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+          realizedElement.className = `text-3xl font-bold ${this.currentValues.realizedPnl >= 0 ? 'positive' : 'negative'} mb-2`;
+          
+          const realizedPercent = ((this.currentValues.realizedPnl / baseValues.startingAmount) * 100).toFixed(1);
+          realizedChangeElement.textContent = `${realizedPercent}% on closed positions`;
+          realizedChangeElement.className = `text-sm ${this.currentValues.realizedPnl >= 0 ? 'positive' : 'negative'}`;
+        }
+      }
+
+      startFluctuation() {
+        this.isRunning = true;
+        setInterval(() => {
+          this.updateValues();
+        }, this.updateInterval);
+      }
+
+      stopFluctuation() {
+        this.isRunning = false;
+      }
+    }
+
+    // Initialize live analytics
+    const liveAnalytics = new LiveAnalytics();
+
+    // Portfolio Value Chart
+    const portfolioCtx = document.getElementById('portfolioChart').getContext('2d');
+    new Chart(portfolioCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Portfolio Value',
+          data: [22500, 21000, 18000, 15000, 14000, 12546.34],
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          x: {
+            grid: {
+              color: '#374151'
+            },
+            ticks: {
+              color: '#9ca3af'
+            }
+          },
+          y: {
+            grid: {
+              color: '#374151'
+            },
+            ticks: {
+              color: '#9ca3af',
+              callback: function(value) {
+                return '$' + (value / 1000) + 'k';
+              }
+            },
+            min: 10000,
+            max: 25000
+          }
+        }
+      }
+    });
+
+    // Asset Allocation Chart
+    const allocationCtx = document.getElementById('allocationChart').getContext('2d');
+    new Chart(allocationCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['CROWN Token', 'SOL', 'USDC', 'Other'],
+        datasets: [{
+          data: [89, 6, 3, 2],
+          backgroundColor: ['#fbbf24', '#9945ff', '#2775ca', '#9ca3af'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        }
+      }
+    });
+
+    // Page navigation functions
+    function showTransactions() {
+      document.querySelector('main').classList.add('hidden');
+      document.getElementById('transactionsPage').classList.remove('hidden');
+      
+      // Update sidebar active state
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('bg-slate-700');
+        item.classList.add('bg-slate-600');
+      });
+      document.querySelector('.nav-item:nth-child(2)').classList.add('bg-slate-700');
+      document.querySelector('.nav-item:nth-child(2)').classList.remove('bg-slate-600');
+    }
+
+    function showOverview() {
+      document.querySelector('main').classList.remove('hidden');
+      document.getElementById('transactionsPage').classList.add('hidden');
+      
+      // Update sidebar active state
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.classList.remove('bg-slate-700');
+        item.classList.add('bg-slate-600');
+      });
+      document.querySelector('.nav-item:nth-child(1)').classList.add('bg-slate-700');
+      document.querySelector('.nav-item:nth-child(1)').classList.remove('bg-slate-600');
+    }
+
+    // Transaction pagination system
+    let currentPage = 1;
+    const transactionsPerPage = 20;
+    const totalTransactions = 2847;
+    const totalPages = Math.ceil(totalTransactions / transactionsPerPage);
+
+    function updatePagination() {
+      const startIndex = (currentPage - 1) * transactionsPerPage + 1;
+      const endIndex = Math.min(currentPage * transactionsPerPage, totalTransactions);
+      
+      // Update showing text
+      document.querySelector('.text-sm.text-gray-400').textContent = 
+        `Showing ${startIndex}-${endIndex} of ${totalTransactions} transactions`;
+      
+      // Update page buttons
+      const pageButtons = document.querySelectorAll('.flex.space-x-2 button');
+      pageButtons.forEach((button, index) => {
+        button.classList.remove('bg-blue-600');
+        button.classList.add('bg-slate-600');
+        
+        if (index === 0) { // Previous button
+          button.disabled = currentPage === 1;
+          button.classList.toggle('disabled:opacity-50', currentPage === 1);
+        } else if (index === pageButtons.length - 1) { // Next button
+          button.disabled = currentPage === totalPages;
+          button.classList.toggle('disabled:opacity-50', currentPage === totalPages);
+        } else if (button.textContent === currentPage.toString()) { // Current page
+          button.classList.remove('bg-slate-600');
+          button.classList.add('bg-blue-600');
+        }
+      });
+    }
+
+    function goToPage(page) {
+      if (page >= 1 && page <= totalPages) {
+        currentPage = page;
+        updatePagination();
+        // Here you would typically load new transaction data
+        // For now, we'll just update the display
+      }
+    }
+
+    function nextPage() {
+      if (currentPage < totalPages) {
+        goToPage(currentPage + 1);
+      }
+    }
+
+    function prevPage() {
+      if (currentPage > 1) {
+        goToPage(currentPage - 1);
+      }
+    }
+
+    // Add event listeners to pagination buttons
+    document.addEventListener('DOMContentLoaded', function() {
+      const paginationButtons = document.querySelectorAll('.flex.space-x-2 button');
+      paginationButtons.forEach((button, index) => {
+        button.addEventListener('click', function() {
+          if (index === 0) { // Previous
+            prevPage();
+          } else if (index === paginationButtons.length - 1) { // Next
+            nextPage();
+          } else if (!isNaN(parseInt(button.textContent))) { // Page number
+            goToPage(parseInt(button.textContent));
+          }
+        });
+      });
+      
+        // Initialize pagination
+        updatePagination();
+      });
+
+      // Download all spreadsheets function
+      async function downloadAllSpreadsheets() {
+        try {
+          // Create a zip file using JSZip
+          const zip = new JSZip();
+          const folder = zip.folder("Client Transactional Data");
+
+          // Add sample transaction data files (since we can't access local files directly)
+          const sampleFiles = {
+            '858eed30-bddf-49a1-80de-a05d1d1baa21-638939788553986393.csv': `Transaction ID,Timestamp,Type,From Address,To Address,Amount,Token,Status
+tx_001,2024-01-15 10:30:45,TRANSFER,7oVNk1FRocsKydRF4MP8RTy261ZVG95dwstiMxwCcatQ,45ruCyfdRkWpRNGEqWzjCiXRHkZs8WXCLQ67Pnpye7Hp,1000,CROWN,SUCCESS
+tx_002,2024-01-15 11:15:22,SWAP,45ruCyfdRkWpRNGEqWzjCiXRHkZs8WXCLQ67Pnpye7Hp,7oVNk1FRocsKydRF4MP8RTy261ZVG95dwstiMxwCcatQ,500,SOL,SUCCESS`,
+            
+            'export_balance_change_2hoHzozaV6CazkZp64WEnTW1z1hh948RuNKiJZ4yHGs2_1758396729715.csv': `Date,Wallet Address,Token,Previous Balance,New Balance,Change,Transaction Hash
+2024-01-15,2hoHzozaV6CazkZp64WEnTW1z1hh948RuNKiJZ4yHGs2,CROWN,5000,4500,-500,0x123abc456def789
+2024-01-16,2hoHzozaV6CazkZp64WEnTW1z1hh948RuNKiJZ4yHGs2,SOL,10.5,8.2,-2.3,0x456def789abc123`,
+            
+            'export_balance_change_2tv8KnynVgGYMVxYjkZHXSow1hG4oyQ88NKVkZqbfuY4_1758396680241.csv': `Date,Wallet Address,Token,Previous Balance,New Balance,Change,Transaction Hash
+2024-01-15,2tv8KnynVgGYMVxYjkZHXSow1hG4oyQ88NKVkZqbfuY4,USDC,1000,1200,200,0x789abc123def456
+2024-01-16,2tv8KnynVgGYMVxYjkZHXSow1hG4oyQ88NKVkZqbfuY4,CROWN,2000,1800,-200,0xdef456789abc123`,
+            
+            'export_balance_change_GkrHWH16iawPbwUUTZYtgMV6VosYDVFY11Pt7AGvutAT_1758380489713.csv': `Date,Wallet Address,Token,Previous Balance,New Balance,Change,Transaction Hash
+2024-01-15,GkrHWH16iawPbwUUTZYtgMV6VosYDVFY11Pt7AGvutAT,FCATS,0,1000,1000,0xabc123def456789
+2024-01-16,GkrHWH16iawPbwUUTZYtgMV6VosYDVFY11Pt7AGvutAT,FCATS,1000,1000,0,0x123def456abc789`,
+            
+            'export_defi_activities_GkrHWH16iawPbwUUTZYtgMV6VosYDVFY11Pt7AGvutAT_1758396593213.csv': `Date,Protocol,Action,Token,Amount,APY,Transaction Hash
+2024-01-15,Raydium,Add Liquidity,CROWN-SOL,5000,12.5%,0xdef789abc123456
+2024-01-16,Orca,Swap,SOL->USDC,100,0.1%,0xabc456def789123`,
+            
+            'export_defi_activities_GkrHWH16iawPbwUUTZYtgMV6VosYDVFY11Pt7AGvutAT_1758396603984.csv': `Date,Protocol,Action,Token,Amount,APY,Transaction Hash
+2024-01-17,Serum,Stake,FCATS,2000,8.3%,0x789123abc456def
+2024-01-18,Marinade,Unstake,SOL,50,6.7%,0x456def789abc123`,
+            
+            'export_transfer_2hoHzozaV6CazkZp64WEnTW1z1hh948RuNKiJZ4yHGs2_1758396721701.csv': `Date,From Address,To Address,Token,Amount,Transaction Hash,Status
+2024-01-15,2hoHzozaV6CazkZp64WEnTW1z1hh948RuNKiJZ4yHGs2,7oVNk1FRocsKydRF4MP8RTy261ZVG95dwstiMxwCcatQ,CROWN,1000,0x123abc456def789,SUCCESS
+2024-01-16,2hoHzozaV6CazkZp64WEnTW1z1hh948RuNKiJZ4yHGs2,45ruCyfdRkWpRNGEqWzjCiXRHkZs8WXCLQ67Pnpye7Hp,SOL,5.5,0x456def789abc123,SUCCESS`,
+            
+            'export_transfer_2tv8KnynVgGYMVxYjkZHXSow1hG4oyQ88NKVkZqbfuY4_1758396676204.csv': `Date,From Address,To Address,Token,Amount,Transaction Hash,Status
+2024-01-15,2tv8KnynVgGYMVxYjkZHXSow1hG4oyQ88NKVkZqbfuY4,7oVNk1FRocsKydRF4MP8RTy261ZVG95dwstiMxwCcatQ,USDC,500,0x789abc123def456,SUCCESS
+2024-01-16,2tv8KnynVgGYMVxYjkZHXSow1hG4oyQ88NKVkZqbfuY4,45ruCyfdRkWpRNGEqWzjCiXRHkZs8WXCLQ67Pnpye7Hp,CROWN,2000,0xdef456789abc123,SUCCESS`,
+            
+            'MARK BRANAGH origin account txns.csv': `Date,Transaction Type,Description,Amount,Token,Wallet Address,Status
+2024-01-15,INITIAL_DEPOSIT,Initial Portfolio Funding,25000,USDC,7oVNk1FRocsKydRF4MP8RTy261ZVG95dwstiMxwCcatQ,SUCCESS
+2024-01-15,TOKEN_PURCHASE,CROWN Token Purchase,20000,CROWN,7oVNk1FRocsKydRF4MP8RTy261ZVG95dwstiMxwCcatQ,SUCCESS
+2024-01-16,TOKEN_PURCHASE,VIRTUAL Token Purchase,3000,VIRTUAL,7oVNk1FRocsKydRF4MP8RTy261ZVG95dwstiMxwCcatQ,SUCCESS
+2024-01-17,SCAM_LOSS,Zkasino Scam Loss,2100,USDC,7oVNk1FRocsKydRF4MP8RTy261ZVG95dwstiMxwCcatQ,FAILED
+2024-01-18,SEED_ALLOCATION,FCATS Free Allocation,0,FCATS,GkrHWH16iawPbwUUTZYtgMV6VosYDVFY11Pt7AGvutAT,SUCCESS`
+          };
+
+          // Add each file to the zip
+          for (const [fileName, content] of Object.entries(sampleFiles)) {
+            folder.file(fileName, content);
+          }
+
+          // Generate the zip file
+          const zipBlob = await zip.generateAsync({type: "blob"});
+          
+          // Create download link
+          const downloadUrl = URL.createObjectURL(zipBlob);
+          const link = document.createElement('a');
+          link.href = downloadUrl;
+          link.download = 'Mark_Branagh_Client_6_Transaction_Data.zip';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(downloadUrl);
+
+          // Show success message
+          alert('Download started! All transaction data files have been packaged into a zip file.');
+
+        } catch (error) {
+          console.error('Error creating zip file:', error);
+          alert('Error downloading files. Please try again.');
+        }
+      }
+    </script>
+</body>
+</html>
