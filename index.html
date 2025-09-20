@@ -299,6 +299,42 @@
         gap: 0.5rem;
       }
       
+      /* Mobile token icons - prevent squashing */
+      .mobile-token-icon {
+        min-width: 3rem;
+        min-height: 3rem;
+        width: 3rem;
+        height: 3rem;
+        flex-shrink: 0;
+      }
+      
+      .mobile-token-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
+      /* Mobile FCATS section header */
+      .mobile-fcats-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+      
+      .mobile-fcats-icon {
+        min-width: 4rem;
+        min-height: 4rem;
+        width: 4rem;
+        height: 4rem;
+        flex-shrink: 0;
+      }
+      
+      .mobile-fcats-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      
       .mobile-token-info {
         text-align: left;
       }
@@ -550,9 +586,9 @@
       <!-- VIRTUAL Token Section -->
       <div class="mb-6">
         <div class="card p-6">
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4 mobile-token-header">
             <div class="flex items-center space-x-4">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden mobile-token-icon">
                 <img src="assets/VIRTUAL.png" alt="VIRTUAL Token" class="w-full h-full object-cover">
               </div>
               <div>
@@ -594,9 +630,9 @@
       <!-- CROWN Token Section -->
       <div class="mb-6">
         <div class="card p-6">
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4 mobile-token-header">
             <div class="flex items-center space-x-4">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden mobile-token-icon">
                 <img src="assets/CROWN.png" alt="CROWN Token" class="w-full h-full object-cover">
               </div>
               <div>
@@ -657,9 +693,9 @@
           <div class="absolute bottom-0 left-0 w-24 h-24 bg-blue-500 bg-opacity-20 rounded-full translate-y-12 -translate-x-12"></div>
           
           <div class="relative z-10">
-            <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center justify-between mb-6 mobile-fcats-header">
               <div class="flex items-center space-x-4">
-                <div class="w-16 h-16 rounded-full flex items-center justify-center shadow-lg overflow-hidden">
+                <div class="w-16 h-16 rounded-full flex items-center justify-center shadow-lg overflow-hidden mobile-fcats-icon">
                   <img src="assets/FCATS.png" alt="FCATS Token" class="w-full h-full object-cover">
                 </div>
                 <div>
@@ -926,9 +962,9 @@
       <!-- Zkasino Scam Section -->
       <div class="mb-6">
         <div class="card p-6 border border-red-500">
-          <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center justify-between mb-4 mobile-token-header">
             <div class="flex items-center space-x-4">
-              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden">
+              <div class="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden mobile-token-icon">
                 <img src="assets/ZKASINO.jpg" alt="Zkasino" class="w-full h-full object-cover">
               </div>
               <div>
