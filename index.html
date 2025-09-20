@@ -301,42 +301,72 @@
       
       /* Mobile token icons - prevent squashing */
       .mobile-token-icon {
-        min-width: 3rem;
-        min-height: 3rem;
-        width: 3rem;
-        height: 3rem;
-        flex-shrink: 0;
+        min-width: 3rem !important;
+        min-height: 3rem !important;
+        width: 3rem !important;
+        height: 3rem !important;
+        flex-shrink: 0 !important;
       }
       
       .mobile-token-icon img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
       }
       
       /* Mobile FCATS section header */
       .mobile-fcats-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
       }
       
       .mobile-fcats-icon {
-        min-width: 4rem;
-        min-height: 4rem;
-        width: 4rem;
-        height: 4rem;
-        flex-shrink: 0;
+        min-width: 4rem !important;
+        min-height: 4rem !important;
+        width: 4rem !important;
+        height: 4rem !important;
+        flex-shrink: 0 !important;
       }
       
       .mobile-fcats-icon img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover !important;
       }
       
       .mobile-token-info {
         text-align: left;
+      }
+      
+      /* Direct mobile overrides for token icons */
+      .w-12.h-12.rounded-full {
+        min-width: 3rem !important;
+        min-height: 3rem !important;
+        width: 3rem !important;
+        height: 3rem !important;
+        flex-shrink: 0 !important;
+      }
+      
+      .w-16.h-16.rounded-full {
+        min-width: 4rem !important;
+        min-height: 4rem !important;
+        width: 4rem !important;
+        height: 4rem !important;
+        flex-shrink: 0 !important;
+      }
+      
+      /* Mobile token section headers */
+      .flex.items-center.justify-between.mb-4 {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+      }
+      
+      .flex.items-center.justify-between.mb-6 {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 1rem !important;
       }
       
       /* Mobile-optimized buttons */
