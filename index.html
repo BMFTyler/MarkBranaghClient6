@@ -52,9 +52,9 @@
     /* Sticky sidebar */
     .sidebar {
       position: fixed;
-      top: 0;
+      top: 60px;
       left: 0;
-      height: 100vh;
+      height: calc(100vh - 60px);
       overflow-y: auto;
       z-index: 1000;
     }
@@ -87,9 +87,9 @@
       /* Mobile sidebar - slide out from left */
       .sidebar {
         position: fixed;
-        top: 0;
+        top: 50px;
         left: -280px;
-        height: 100vh;
+        height: calc(100vh - 50px);
         width: 280px;
         z-index: 1000;
         transition: left 0.3s ease;
@@ -147,13 +147,13 @@
         margin-left: 0;
         width: 100%;
         padding: 1rem;
-        padding-top: 4rem; /* Space for mobile menu button */
+        padding-top: 6rem; /* Space for banner + mobile menu button */
       }
       
       /* Mobile menu button - more prominent */
       .mobile-menu-btn {
         position: fixed;
-        top: 1rem;
+        top: 4rem;
         left: 1rem;
         z-index: 1001;
         background: #1e293b;
@@ -437,9 +437,117 @@
         display: none !important;
       }
     }
+    
+    /* API Warning Banner Styles */
+    .api-warning-banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.7) 0%, rgba(217, 119, 6, 0.7) 100%);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.6);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform: skewY(-1deg);
+      box-shadow: 0 2px 12px rgba(245, 158, 11, 0.2);
+      animation: warningPulse 4s ease-in-out infinite;
+    }
+    
+    .api-warning-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 15px,
+        rgba(255, 255, 255, 0.05) 15px,
+        rgba(255, 255, 255, 0.05) 30px
+      );
+      pointer-events: none;
+    }
+    
+    .api-warning-content {
+      transform: skewY(1deg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      font-weight: 500;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+      font-size: 15px;
+    }
+    
+    .api-warning-icon {
+      animation: warningBlink 2.5s ease-in-out infinite;
+    }
+    
+    @keyframes warningPulse {
+      0%, 100% {
+        box-shadow: 0 2px 12px rgba(245, 158, 11, 0.2);
+        transform: skewY(-1deg) scale(1);
+      }
+      50% {
+        box-shadow: 0 3px 16px rgba(245, 158, 11, 0.3);
+        transform: skewY(-1deg) scale(1.005);
+      }
+    }
+    
+    @keyframes warningBlink {
+      0%, 80% {
+        opacity: 1;
+      }
+      85%, 95% {
+        opacity: 0.6;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    
+    /* Adjust main content to account for warning banner */
+    .main-content {
+      margin-left: 280px;
+      margin-top: 60px;
+    }
+    
+    /* Mobile adjustments for warning banner */
+    @media (max-width: 768px) {
+      .api-warning-banner {
+        height: 50px;
+        font-size: 14px;
+      }
+      
+      .api-warning-content {
+        font-size: 14px;
+        gap: 8px;
+      }
+      
+      .main-content {
+        margin-left: 0;
+        margin-top: 50px;
+        padding-top: 1rem;
+      }
+    }
   </style>
 </head>
 <body class="min-h-screen bg-slate-900">
+  <!-- API Warning Banner -->
+  <div class="api-warning-banner">
+    <div class="api-warning-content">
+      <i data-feather="alert-triangle" class="api-warning-icon w-6 h-6"></i>
+      <span>⚠️ API CONNECTION ERROR - Live Data Feed Interrupted</span>
+      <i data-feather="wifi-off" class="api-warning-icon w-5 h-5"></i>
+    </div>
+  </div>
+  
   <div class="flex">
     <!-- Mobile Menu Button (only visible on mobile) -->
     <button id="mobileMenuBtn" class="mobile-menu-btn" title="Open Menu">
